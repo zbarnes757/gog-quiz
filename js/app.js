@@ -39,7 +39,10 @@ $(document).ready(function () {
 	};
 	var questions = [question1,question2,question3,question4,question5];
 //Global Functions
-	
+	//Displays current question number 
+	function displayQNum () {
+		$("#questionNum p").text(questionCount + 1);
+	};
 	//updates score
 	function updateScore () {
 		if (numCorrect=== 0) {
@@ -68,14 +71,46 @@ $(document).ready(function () {
 		}
 	};
 
+	//Setup current question
+	function setCurrentQ () {
+		// clear out current text
+		$("#questions p").empty();
+		$("#questions form").empty();
+		$("#questionImage").empty();
+		displayQNum();
+		//load current question
+		var currentQuestion = questions[questionCount];
+		var choices = currentQuestion.options;
+		$("#questionImage").append("<img src='" + currentQuestion.image + "'>");
+		$("#questions p").text(currentQuestion.text);
+		for (var i = 0; i < choices.length; i++) {
+			$("#questions form").append("<input type='radio' name='Answer' value=" + i + "> <label for='answer'>" + choices[i] + "</label><br>");
+		};
+		$("#questions form").append("<input  type='submit' class='button' id='submit'>");
+		questionCount++;
+		console.log(questionCount);
+	}
+	//Test for correctness
+	function testCorrect () {
+		
+	}
+
 	//Fades from welcome to questions
-	$('#start').on('click', function () {
+	$('#start').click(function () {
 	console.log("start button works");
 	$('#welcome').fadeOut("slow");
 	$('#questions').delay(700).fadeIn("slow");
 	$('#questionNum').delay(700).fadeIn("slow");
 	$('#correct').delay(700).fadeIn("slow");
+	setCurrentQ();
 	});
+
+	//Cycle through questions as answers are given
+	$("#submit").click(function() {
+		setCurrentQ();
+
+	});
+
 
 
 
