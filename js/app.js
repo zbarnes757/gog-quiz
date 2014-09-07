@@ -45,30 +45,10 @@ $(document).ready(function () {
 	};
 	//updates score
 	function updateScore () {
-		if (numCorrect=== 0) {
-			$('#correct p').text("0%");
-			console.log("0 correct.");
-		} 
-		else if (numCorrect === 1){
-			$('#correct p').text("20%");
-			console.log("1 correct.");
-		}
-		else if (numCorrect === 2){
-			$('#correct p').text("40%");
-			console.log("2 correct.");
-		}
-		else if (numCorrect === 3){
-			$('#correct p').text("60%");
-			console.log("3 correct.");
-		}
-		else if (numCorrect === 4){
-			$('#correct p').text("80%");
-			console.log("4 correct.");
-		}
-		else if (numCorrect === 5){
-			$('#correct p').text("100%");
-			console.log("5 correct.");
-		}
+		var percent = 20 * numCorrect;
+		percent = '' + percent + '%';
+		$('#correct p').text(percent); 
+		console.log('' + numCorrect + ' correct.');
 	};
 
 	//Setup current question
@@ -77,23 +57,48 @@ $(document).ready(function () {
 		$("#questions p").empty();
 		$("#questions form").empty();
 		$("#questionImage").empty();
-		displayQNum();
-		//load current question
-		var currentQuestion = questions[questionCount];
-		var choices = currentQuestion.options;
-		$("#questionImage").append("<img src='" + currentQuestion.image + "'>");
-		$("#questions p").text(currentQuestion.text);
-		for (var i = 0; i < choices.length; i++) {
-			$("#questions form").append("<input type='radio' name='Answer' value=" + i + "> <label for='answer'>" + choices[i] + "</label><br>");
-		};
-		$("#questions form").append("<input  type='submit' class='button' id='submit'>");
+		//load current question or ending
+		if (questionCount < 5) {
+			displayQNum();
+			var currentQuestion = questions[questionCount];
+			var choices = currentQuestion.options;
+			$("#questionImage").append("<img src='" + currentQuestion.image + "'>");
+			$("#questions p").text(currentQuestion.text);
+			for (var i = 0; i < choices.length; i++) {
+				$("#questions form").append("<input type='radio' name='Answer' value=" + i + "> <label for='answer'>" + choices[i] + "</label><br>");
+			};
+			$("#questions form").append("<input  type='button' class='button' id='submit' value='Submit'>");
+		} else {
+			$("#questionImage").append("<img src='img/gog-end.jpg'>");
+			$("#questions p").text("Thanks for playing!");
+			$("#questions form").append("<input  type='button' class='button' id='reset' value='Try Again!'>");
+
+		}
+		$("#reset").click(function () {
+			resetTotal();
+		});
 		questionCount++;
 		console.log(questionCount);
-	}
-	//Test for correctness
-	function testCorrect () {
-		
-	}
+
+		//Cycle through questions as answers are given
+		$("#submit").click(function() {
+		console.log("submit button works");
+			//checking and updating your score
+			if ($("input:checked").val() == currentQuestion.answer) {
+				numCorrect++;
+			} else {
+				console.log("WRONG!!!!");
+		};
+			updateScore();
+			//proceed to next questions	
+			setCurrentQ();
+
+		});
+
+	
+
+	};
+	console.log("before start Setup");
 
 	//Fades from welcome to questions
 	$('#start').click(function () {
@@ -105,14 +110,14 @@ $(document).ready(function () {
 	setCurrentQ();
 	});
 
-	//Cycle through questions as answers are given
-	$("#submit").click(function() {
-		setCurrentQ();
+	//reset the quiz
+	function resetTotal () {
+		questionCount = 0;
+		numCorrect = 0;
+		$("#questions").fadeOut("slow");
+		$("#questionNum").fadeOut("slow");
+		$("#correct").fadeOut("slow");
+		$('#welcome').delay(700).fadeIn("slow");
+		}
 
-	});
-
-
-
-
-
-})
+});
